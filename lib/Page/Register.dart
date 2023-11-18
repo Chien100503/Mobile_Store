@@ -185,7 +185,6 @@ class _RegisterState extends State<Register> {
   // API
   void registerUser() async {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-      // đang khai bao email là chuoi kia
       var regBody = {
         "email": emailController.text,
         "password": passwordController.text
