@@ -5,17 +5,32 @@ import 'package:cannabis/DrawerPages/Extracts.dart';
 import 'package:cannabis/DrawerPages/Flowers.dart';
 import 'package:cannabis/DrawerPages/Vapes.dart';
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../Components/Search.dart';
 
 class HomeIndex extends StatefulWidget {
-  const HomeIndex({super.key});
+  final token;
+  const HomeIndex({@required this.token, Key? key}) : super(key: key);
 
   @override
   State<HomeIndex> createState() => _HomeIndexState();
 }
 
 class _HomeIndexState extends State<HomeIndex> {
+
+  //
+  late String email;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
+
+    email = jwtDecodedToken['email'];
+  }
+
   static const List<Widget> _widgetOptions = <Widget>[
     Explore(),
     VapesPage(),
@@ -32,19 +47,24 @@ class _HomeIndexState extends State<HomeIndex> {
   }
 
   int _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: Builder(builder: (context){
-            return IconButton(onPressed: ()=>{
-              Scaffold.of(context).openDrawer()
-            }, icon: const Icon(Icons.menu, color: Colors.black,));
-          },),
+          leading: Builder(
+            builder: (context) {
+              return IconButton(
+                  onPressed: () => {Scaffold.of(context).openDrawer()},
+                  icon: const Icon(
+                    Icons.menu,
+                    color: Colors.black,
+                  ));
+            },
+          ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(left: 30, right: 30),
@@ -100,7 +120,10 @@ class _HomeIndexState extends State<HomeIndex> {
                 ListTile(
                   selectedColor: const Color(0xff81AA66),
                   textColor: Colors.grey,
-                  title: const Text('Explore', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                  title: const Text(
+                    'Explore',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
                   selected: _selectedIndex == 0,
                   onTap: () {
                     // Update the state of the app
@@ -112,7 +135,10 @@ class _HomeIndexState extends State<HomeIndex> {
                 ListTile(
                   selectedColor: const Color(0xff81AA66),
                   textColor: Colors.grey,
-                  title: const Text('Vapes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                  title: const Text(
+                    'Vapes',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
                   selected: _selectedIndex == 1,
                   onTap: () {
                     // Update the state of the app
@@ -124,7 +150,10 @@ class _HomeIndexState extends State<HomeIndex> {
                 ListTile(
                   selectedColor: const Color(0xff81AA66),
                   textColor: Colors.grey,
-                  title: const Text('Extracts', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                  title: const Text(
+                    'Extracts',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
                   selected: _selectedIndex == 2,
                   onTap: () {
                     // Update the state of the app
@@ -136,7 +165,10 @@ class _HomeIndexState extends State<HomeIndex> {
                 ListTile(
                   selectedColor: const Color(0xff81AA66),
                   textColor: Colors.grey,
-                  title: const Text('Edibles', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                  title: const Text(
+                    'Edibles',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
                   selected: _selectedIndex == 3,
                   onTap: () {
                     // Update the state of the app
@@ -148,7 +180,10 @@ class _HomeIndexState extends State<HomeIndex> {
                 ListTile(
                   selectedColor: const Color(0xff81AA66),
                   textColor: Colors.grey,
-                  title: const Text('Flowers', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                  title: const Text(
+                    'Flowers',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
                   selected: _selectedIndex == 4,
                   onTap: () {
                     // Update the state of the app
@@ -160,7 +195,10 @@ class _HomeIndexState extends State<HomeIndex> {
                 ListTile(
                   selectedColor: const Color(0xff81AA66),
                   textColor: Colors.grey,
-                  title: const Text('Accessories', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+                  title: const Text(
+                    'Accessories',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
                   selected: _selectedIndex == 5,
                   onTap: () {
                     // Update the state of the app
@@ -169,10 +207,17 @@ class _HomeIndexState extends State<HomeIndex> {
                     Navigator.pop(context);
                   },
                 ),
-
-                const SizedBox(height: 90,),
+                const SizedBox(
+                  height: 90,
+                ),
                 ListTile(
-                  title: const Text('Log out', style: TextStyle(color: Colors.red, fontSize: 18, fontWeight: FontWeight.w700),),
+                  title: const Text(
+                    'Log out',
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700),
+                  ),
                   selected: _selectedIndex == 6,
                   onTap: () {
                     // Update the state of the app

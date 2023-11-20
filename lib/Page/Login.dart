@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'package:cannabis/Components/DashBoard.dart';
 import 'package:cannabis/Page/Home.dart';
 import 'package:cannabis/Page/Register.dart';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart' ;
+
+import '../Db/Config.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,8 +17,47 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  bool _isNotValidate = false;
   bool _obscureText = true;
   bool? isChecked = false;
+  // Lan truyen muon
+
+   SharedPreferences? preferences;
+  void initSharedPref() async{
+    preferences = await SharedPreferences.getInstance();
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+   initSharedPref();
+  }
+  void loginUser() async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      var regBody = {
+        "email": emailController.text,
+        "password": passwordController.text
+      };
+
+      var response = await http.post(Uri.parse(login),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(regBody));
+      var jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse['status']) {
+        var myToken = jsonResponse['token'];
+        // preferences!.setString('token', myToken);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeIndex(token: myToken)));
+      }else {
+        print('Something went wrong ');
+      }
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +84,14 @@ class _LoginState extends State<Login> {
                 width: 315,
                 height: 56,
                 child: TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
                       borderSide: BorderSide(width: 19),
                     ),
                     labelText: 'Email Address',
+                    errorText: _isNotValidate ? "Enter Proper Info" : null,
                     labelStyle: TextStyle(color: Color(0xff81AA66)),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Color(0xff81AA66)),
@@ -61,6 +107,7 @@ class _LoginState extends State<Login> {
                 width: 315,
                 height: 56,
                 child: TextField(
+                  controller: passwordController,
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -68,6 +115,7 @@ class _LoginState extends State<Login> {
                       borderSide: BorderSide(width: 19),
                     ),
                     labelText: 'Password',
+                    errorText: _isNotValidate ? "Enter Proper Info" : null,
                     labelStyle: TextStyle(color: Color(0xff81AA66)),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Color(0xff81AA66)),
@@ -116,11 +164,7 @@ class _LoginState extends State<Login> {
               ),
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      PageTransition(
-                          child: HomeIndex(),
-                          type: PageTransitionType.leftToRightWithFade));
+                  loginUser();
                 },
                 child: Container(
                   height: 48,
@@ -162,7 +206,7 @@ class _LoginState extends State<Login> {
                           context,
                           PageTransition(
                               child: Register(),
-                              type: PageTransitionType.rightToLeftWithFade));
+                              type: PageTransitionType.rightToLeft));
                     },
                   )
                 ],
@@ -173,4 +217,6 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+
 }

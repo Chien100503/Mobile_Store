@@ -189,6 +189,7 @@ class _RegisterState extends State<Register> {
         "email": emailController.text,
         "password": passwordController.text
       };
+
       var response = await http.post(Uri.parse(registration),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(regBody));
