@@ -5,16 +5,13 @@ const db = require("../config/db");
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
+  image: { type: String },
   email: { type: String, lowercase: true, required: true, unique: true },
   password: { type: String, required: true },
 });
 
 userSchema.pre("save", async function (next) {
   try {
-    //  ext();
-    // } const user = this;
-    // if (!user.isModified("password")) {
-    //   return n
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(this.password, salt);
     this.password = hashPassword;

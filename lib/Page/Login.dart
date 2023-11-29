@@ -5,7 +5,7 @@ import 'package:cannabis/Page/Register.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:page_transition/page_transition.dart';
-import 'package:shared_preferences/shared_preferences.dart' ;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Db/Config.dart';
 
@@ -15,26 +15,31 @@ class Login extends StatefulWidget {
   @override
   State<Login> createState() => _LoginState();
 }
-
+TextEditingController emailController = TextEditingController();
+TextEditingController passwordController = TextEditingController();
 class _LoginState extends State<Login> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+
   bool _isNotValidate = false;
   bool _obscureText = true;
   bool? isChecked = false;
+
   // Lan truyen muon
 
-   SharedPreferences? preferences;
-  void initSharedPref() async{
+  SharedPreferences? preferences;
+
+  void initSharedPref() async {
     preferences = await SharedPreferences.getInstance();
   }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-   initSharedPref();
+    initSharedPref();
   }
+
   void loginUser() async {
+    SharedPreferences local =await SharedPreferences.getInstance();
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       var regBody = {
         "email": emailController.text,
@@ -48,16 +53,55 @@ class _LoginState extends State<Login> {
 
       if (jsonResponse['status']) {
         var myToken = jsonResponse['token'];
-        // preferences!.setString('token', myToken);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeIndex(token: myToken)));
-      }else {
-        print('Something went wrong ');
+       local.setString('token', myToken);
+       local.setString('userId',  jsonResponse['userId']);
+       print('check token ${local.getString('userId')}');
+        // dduwoj đây phải
+        // lỗi chi đây khi nãy t cũng bị
+        // cái homepage ở đâu
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            content: Container(
+              padding: EdgeInsets.all(16),
+              height: 90,
+              decoration: BoxDecoration(
+                color: Color(0xff81AA66),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'WOW',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  Text('You have successfully Login',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          ),
+        );
+        Future.delayed(Duration(seconds: 4), () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomeIndex(token: myToken)));
+        });
+      } else if (emailController.text.isNotEmpty || passwordController.text.isNotEmpty) {
+        print('input went wrong');
       }
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +261,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
-
 }

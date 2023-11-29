@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Edibles extends StatefulWidget {
-  const Edibles({super.key});
+class Flower extends StatefulWidget {
+  const Flower({super.key});
 
   @override
-  State<Edibles> createState() => _EdiblesState();
+  State<Flower> createState() => _FlowerState();
 }
 
-class _EdiblesState extends State<Edibles> {
+class _FlowerState extends State<Flower> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Text(
-            'Edibles'
+            'Accessories'
         ),
       ),
     );

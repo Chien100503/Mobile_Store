@@ -6,11 +6,13 @@ import 'package:cannabis/DrawerPages/Flowers.dart';
 import 'package:cannabis/DrawerPages/Vapes.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-
+import 'package:page_transition/page_transition.dart';
 import '../Components/Search.dart';
+import 'Login.dart';
 
 class HomeIndex extends StatefulWidget {
   final token;
+
   const HomeIndex({@required this.token, Key? key}) : super(key: key);
 
   @override
@@ -18,9 +20,8 @@ class HomeIndex extends StatefulWidget {
 }
 
 class _HomeIndexState extends State<HomeIndex> {
+  late String? email;
 
-  //
-  late String email;
   @override
   void initState() {
     // TODO: implement initState
@@ -50,7 +51,8 @@ class _HomeIndexState extends State<HomeIndex> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return Padding(
+      padding: const EdgeInsets.only(top: 30),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -83,7 +85,11 @@ class _HomeIndexState extends State<HomeIndex> {
                   ),
                   const Search(),
                   IconButton(
-                    icon: const Icon(Icons.favorite, color: Colors.black),
+                    icon: const Icon(
+                      Icons.favorite_border,
+                      color: Colors.black,
+                      size: 30,
+                    ),
                     onPressed: () {},
                   ),
                   const CircleAvatar(
@@ -108,14 +114,18 @@ class _HomeIndexState extends State<HomeIndex> {
                   height: 100,
                 ),
                 const SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage('lib/assets/faceavt.jpg'),
-                      radius: 35,
-                    )),
-                const Center(
-                  child: Text('dukauwa.du@gmail.com'),
+                  width: 100,
+                  height: 100,
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage('lib/assets/faceavt.jpg'),
+                    radius: 35,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Center(
+                  child: Text(email!),
                 ),
                 ListTile(
                   selectedColor: const Color(0xff81AA66),
@@ -223,7 +233,11 @@ class _HomeIndexState extends State<HomeIndex> {
                     // Update the state of the app
                     _onItemTapped(6);
                     // Then close the drawer
-                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        PageTransition(
+                            child: Login(),
+                            type: PageTransitionType.rightToLeft));
                   },
                 ),
               ],

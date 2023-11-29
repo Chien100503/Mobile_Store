@@ -14,6 +14,7 @@ class _SearchState extends State<Search> {
       icon: Icon(
         Icons.search,
         color: Colors.black,
+        size: 30,
       ),
       onPressed: () {
         showSearch(context: context, delegate: CustomSeach());

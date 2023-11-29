@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:cannabis/Db/Config.dart';
 
-import 'package:cannabis/Page/Home.dart';
+
 import 'package:cannabis/Page/Login.dart';
 import 'package:flutter/material.dart';
 
 import 'package:page_transition/page_transition.dart';
 import 'package:http/http.dart' as http;
-import 'package:velocity_x/velocity_x.dart';
+
 
 class Register extends StatefulWidget {
   const Register({super.key});

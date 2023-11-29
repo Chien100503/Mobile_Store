@@ -14,6 +14,7 @@ exports.register = async (req, res, next) => {
 
     const successRes = await userModel.create({ email: email, password: password });
     console.log("check create user", successRes);
+    if (!email || !password) throw new Error("Input wrong");
     res.status(200).json({
       status: true,
       success: "User Register successfully",
@@ -42,8 +43,8 @@ exports.login = async (req, res, next) => {
     let tokenData = { _id: user._id, email: user.email };
 
     const token = await UserService.generateToken(tokenData, "secretKey", "1h");
-    console.log("run at her2e", token);
-    res.status(200).json({ status: true, token: token });
+    console.log("run at here", token);
+    res.status(200).json({ status: true, token: token, userId: user._id, email: user.email });
   } catch (error) {
     throw error;
   }
