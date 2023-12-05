@@ -7,9 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ButtonAdd extends StatefulWidget {
   final token;
-
   const ButtonAdd({@required this.token, Key? key}) : super(key: key);
-
+  //  cái ni chi nữa
   @override
   _ButtonAddState createState() => _ButtonAddState();
 }

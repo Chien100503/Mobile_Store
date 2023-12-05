@@ -34,6 +34,7 @@ dependencies:
   http:
   shared_preferences:
   jwt_decoder:
+  flutter_slidable: ^3.0.1
   draggable_fab: ^0.1.4
   cupertino_icons: ^1.0.2
   page_transition: ^2.0.5

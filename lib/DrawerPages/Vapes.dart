@@ -33,6 +33,7 @@ class _VapesPageState extends State<VapesPage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
+
         children: [
           Column(
             // crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,6 +52,7 @@ class _VapesPageState extends State<VapesPage>
                       child: Column(
                         children: [
                           TabBar(
+                            physics: ScrollPhysics(),
                             labelColor: Colors.blueGrey,
                             unselectedLabelColor: Colors.black,
                             // indicatorColor: Colors.white,
@@ -117,7 +119,7 @@ class _VapesPageState extends State<VapesPage>
                       controller: tabController,
                       children: const [
                         Flower(),
-                        VapesProduct(),
+                        VapeProducts(),
                         Extracts(),
                         Accessories(),
                         Edibles()
