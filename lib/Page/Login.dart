@@ -23,8 +23,6 @@ class _LoginState extends State<Login> {
   bool _obscureText = true;
   bool? isChecked = false;
 
-  // Lan truyen muon
-
   SharedPreferences? preferences;
 
   void initSharedPref() async {
@@ -56,9 +54,6 @@ class _LoginState extends State<Login> {
        local.setString('token', myToken);
        local.setString('userId',  jsonResponse['userId']);
        print('check token ${local.getString('userId')}');
-        // dduwoj đây phải
-        // lỗi chi đây khi nãy t cũng bị
-        // cái homepage ở đâu
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.floating,

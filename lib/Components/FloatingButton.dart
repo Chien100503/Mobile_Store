@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ButtonAdd extends StatefulWidget {
   final token;
   const ButtonAdd({@required this.token, Key? key}) : super(key: key);
-  //  cái ni chi nữa
   @override
   _ButtonAddState createState() => _ButtonAddState();
 }
@@ -40,7 +39,6 @@ class _ButtonAddState extends State<ButtonAdd> {
         _price.text.isNotEmpty) {
       var regBody = {
         "UserId": local.getString('userId'),
-        // "UserId": userId,
         "title": _title.text,
         "description": _description.text,
         "image": _image.text,

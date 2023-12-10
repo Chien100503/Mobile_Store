@@ -4,15 +4,23 @@ const { Types } = require("mongoose");
 class TodoService {
   static async createTodo(UserId, title, description, image, price) {
     const createTodo = new TodoModel({ UserId, title, description, image, price });
-    console.log("dfsdfsf", createTodo);
+    console.log("check------", createTodo);
 
     return await createTodo.save();
   }
   static async getTodoData(UserId) {
-    console.log(UserId);
-    const todoData = await TodoModel.findOne({ UserId: new Types.ObjectId(UserId) });
+    console.log("run at hẻe", UserId);
+    // const todoData = await TodoModel.find({ UserId: UserId.UserId }).exec();
+    const todoData = await TodoModel.find(UserId);
     console.log(todoData);
     return todoData;
+  }
+
+  static async deleteTodo(id) {
+    console.log("run at hẻe", UserId);
+    // const todoData = await TodoModel.find({ UserId: UserId.UserId }).exec();
+    const deleted = await TodoModel.findOneAndDelete({ _id: id });
+    return deleted;
   }
 }
 

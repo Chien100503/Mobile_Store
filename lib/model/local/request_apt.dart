@@ -3,7 +3,7 @@ import '../post.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 class apiRequest {
-  static String url = 'http://192.168.1.5:3000/'; // là răng hè thì api để login đồ đó
+  static String url = 'http://192.168.1.5:3000/';
 
 
   static List<Post> parsePost(String responseBody) {

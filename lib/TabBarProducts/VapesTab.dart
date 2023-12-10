@@ -1,4 +1,3 @@
-import 'package:cannabis/Db/Config.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -6,9 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../Components/FloatingButton.dart';
+import '../Db/Config.dart';
 
 class VapeProducts extends StatefulWidget {
   final token;
+
   const VapeProducts({@required this.token, Key? key}) : super(key: key);
 
   @override
@@ -31,9 +32,10 @@ class _VapeProductsState extends State<VapeProducts> {
     _description = TextEditingController();
     _image = TextEditingController();
     _price = TextEditingController();
+    listStore(); // Call listStore to fetch data when the widget initializes
   }
 
-  void addProducts() async {
+  Future<void> addProducts() async {
     SharedPreferences local = await SharedPreferences.getInstance();
     setState(() {
       userId = local.getString('userId');
@@ -51,7 +53,7 @@ class _VapeProductsState extends State<VapeProducts> {
         "price": _price.text,
       };
       var response = await http.post(
-        Uri.parse(addProduct),
+        Uri.parse('http://192.168.1.5:3000/storeTodo'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(regBody),
       );
@@ -61,88 +63,95 @@ class _VapeProductsState extends State<VapeProducts> {
         _description.clear();
         _image.clear();
         _price.clear();
+        listStore(); // Refresh the list after adding a new product
         Navigator.pop(context);
       } else {
         print('something went wrong $jsonResponse');
       }
     }
-  } // List<Post> postData = [];
+  }
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   apiRequest.fetchPosts().then((dataFromServer) {
-  //     print("data from server $dataFromServer");
-  //     setState(() {
-  //       postData = dataFromServer;
-  //     });
-  //   });
-  // }
+  Future<Map<String, dynamic>> listStore() async {
+    var response =
+    await http.get(Uri.parse(getProduct));
+    var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+    if (jsonResponse.containsKey('success')) {
+      setState(() {
+        items = jsonResponse['success'];
+      });
+    }
+    return jsonResponse;
+  }
+
+  void deleteProduct(id) async {
+    var regBody = {
+      "id": id
+    };
+
+    var response = await http.post(Uri.parse(deleteTodo),
+        headers: { "Content-Type": "application/json"},
+        body: jsonEncode(regBody)
+    );
+
+    var jsonResponse = jsonDecode(response.body);
+    print('check josn------$jsonResponse');
+    if (jsonResponse['status']){
+
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: items == null
-                          ? null
-                          : ListView.builder(
-                              itemCount: items!.length,
-                              itemBuilder: (context, int index) {
-                                return Slidable(
-                                  key: const ValueKey(0),
-                                  endActionPane: ActionPane(
-                                    motion: const ScrollMotion(),
-                                    dismissible:
-                                        DismissiblePane(onDismissed: () {}),
-                                    children: [
-                                      SlidableAction(
-                                        backgroundColor:
-                                            const Color(0xFFFE4A49),
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.delete,
-                                        label: 'Delete',
-                                        onPressed: (BuildContext context) {
-                                          print('${items![index]['_id']}');
-                                          // deleteItem('${items![index]['_id']}');
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  child: Card(
-                                    borderOnForeground: false,
-                                    child: ListTile(
-                                      leading: const Icon(Icons.task),
-                                      title: Text('${items![index]['title']}'),
-                                      subtitle: Text(
-                                          '${items![index]['description']}'),
-                                      trailing: const Icon(Icons.arrow_back),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                    ),
+        child: items == null
+            ? Center(child: CircularProgressIndicator())
+            : ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          // Disable scrolling for the inner ListView
+          shrinkWrap: true,
+          // Allow the ListView to be as tall as its content
+          itemCount: items!.length,
+          itemBuilder: (context, int index) {
+            return Slidable(
+              key: ValueKey(index),
+              endActionPane: ActionPane(
+                motion: ScrollMotion(),
+                dismissible: DismissiblePane(onDismissed: () {}),
+                children: [
+                  SlidableAction(
+                    backgroundColor: Color(0xFFFE4A49),
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Delete',
+                    onPressed: (BuildContext context) {
+                      print(
+                          'check id--------------${items![index]['_id']}');
+                      deleteProduct('${items![index]['_id']}');
+                    },
                   ),
+                ],
+              ),
+              child: Card(
+                borderOnForeground: false,
+                child: ListTile(
+                  leading: Dialog.fullscreen(
+                    child: Container(height: 50,
+                        width: 50,
+                        child: Image(
+                            image: NetworkImage('${items![index]['image']}'))),
+                  ),
+                  title: Text('${items![index]['title']}'),
+                  subtitle: Text('${items![index]['description']}'),
+                  trailing: Text('${items![index]['price']}\$'),
+                  onTap: () {
+                    _showDialog(context, items![index]);
+                  },
                 ),
-              ],
-            ),
-          ],
+              ),
+            );
+          },
         ),
       ),
       floatingActionButton: Container(
@@ -153,9 +162,26 @@ class _VapeProductsState extends State<VapeProducts> {
         width: 50,
         height: 50,
         child: const Center(
-          child: ButtonAdd(),
+          child: ButtonAdd(token: null,),
         ),
       ),
     );
   }
+  void _showDialog(BuildContext context, Map<String, dynamic> item) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Container(
+            height: 100,
+            width: 100,
+            child: Column(
+              children: [
+                Image(image: NetworkImage('${item['image']}')),
+              ],
+            ),
+          ),
+        );
+      },
+    );
 }
